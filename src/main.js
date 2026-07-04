@@ -40,36 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Trigger animations once the user places the pizza on the floor
         viewer.classList.add('in-ar');
 
-        // Animate the 3D model: spin + scale up from nothing
-        const duration = 1200; // ms
-        let startTime = null;
-
-        function animateModel(timestamp) {
-          if (!startTime) startTime = timestamp;
-          const elapsed = timestamp - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-
-          // Ease-out cubic for smooth deceleration
-          const eased = 1 - Math.pow(1 - progress, 3);
-
-          // Scale from 0.01 → 1
-          const s = 0.01 + 0.99 * eased;
-          viewer.scale = `${s} ${s} ${s}`;
-
-          // Rotate from 180° → 0°
-          const rot = 180 * (1 - eased);
-          viewer.orientation = `0 ${rot}deg 0`;
-
-          if (progress < 1) {
-            requestAnimationFrame(animateModel);
-          }
-        }
-
-        requestAnimationFrame(animateModel);
+        // Play the native Blender animation when placed!
+        viewer.play();
 
       } else if (event.detail.status === 'not-presenting') {
         viewer.classList.remove('in-ar');
-        // Reset model to normal
+        // Reset animation and scale
+        viewer.pause();
+        viewer.currentTime = 0;
         viewer.scale = '1 1 1';
         viewer.orientation = '0 0deg 0';
       }
