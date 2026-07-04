@@ -33,15 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (viewer) {
     viewer.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'session-started') {
+        // Start tiny so it's invisible before placing
+        viewer.scale = '0.01 0.01 0.01';
+        viewer.orientation = '0 180deg 0';
+      } else if (event.detail.status === 'object-placed') {
+        // Trigger animations once the user places the pizza on the floor
         viewer.classList.add('in-ar');
 
         // Animate the 3D model: spin + scale up from nothing
         const duration = 1200; // ms
         let startTime = null;
-
-        // Start tiny and rotated
-        viewer.scale = '0.01 0.01 0.01';
-        viewer.orientation = '0 180deg 0';
 
         function animateModel(timestamp) {
           if (!startTime) startTime = timestamp;
