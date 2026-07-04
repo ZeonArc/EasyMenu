@@ -33,9 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (viewer) {
     viewer.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'session-started') {
-        // Start tiny so it's invisible before placing
-        viewer.scale = '0.01 0.01 0.01';
-        viewer.orientation = '0 180deg 0';
+        // Do nothing here, let the model-viewer and Blender animation handle visibility
       } else if (event.detail.status === 'object-placed') {
         // Trigger animations once the user places the pizza on the floor
         viewer.classList.add('in-ar');
