@@ -384,13 +384,13 @@ model-viewer.in-ar .hotspot-content {
 }
 
 /* ── Staggered pop-in delays ── */
-.avocado .hotspot-content { animation-delay: 0.15s; }
-.olives .hotspot-content  { animation-delay: 0.25s; }
-.onion .hotspot-content   { animation-delay: 0.35s; }
-.capsicum .hotspot-content{ animation-delay: 0.45s; }
-.chicken .hotspot-content { animation-delay: 0.55s; }
-.tomato .hotspot-content  { animation-delay: 0.65s; }
-.cucumber .hotspot-content{ animation-delay: 0.75s; }
+.nduja .hotspot-content       { animation-delay: 0.15s; }
+.mozzarella .hotspot-content  { animation-delay: 0.25s; }
+.jalapeno .hotspot-content    { animation-delay: 0.35s; }
+.peppers .hotspot-content     { animation-delay: 0.45s; }
+.sauce .hotspot-content       { animation-delay: 0.55s; }
+.basil .hotspot-content       { animation-delay: 0.65s; }
+.crust .hotspot-content       { animation-delay: 0.75s; }
 
 /* ── Keyframes ── */
 @keyframes popIn {
