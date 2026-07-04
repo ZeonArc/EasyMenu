@@ -53,4 +53,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Handle USDZ Export
+  const exportBtn = document.getElementById('export-usdz');
+  if (exportBtn && viewer) {
+    exportBtn.addEventListener('click', async () => {
+      exportBtn.textContent = 'Generating...';
+      try {
+        const blob = await viewer.toUSDZ();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'dish.usdz';
+        a.click();
+        URL.revokeObjectURL(url);
+        exportBtn.textContent = 'Downloaded!';
+      } catch (e) {
+        console.error(e);
+        exportBtn.textContent = 'Error!';
+      }
+    });
+  }
 });
