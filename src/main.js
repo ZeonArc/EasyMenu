@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Remove active from all
       indicators.forEach(ind => ind.classList.remove('active'));
       // Add active to clicked
+      indicator.classList.add('active');
+    });
   });
 
   // Handle model-viewer AR status to show hotspots only in AR
