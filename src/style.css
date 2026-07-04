@@ -278,9 +278,7 @@ model-viewer.in-ar .hotspot {
 }
 
 .hotspot-content {
-  background: rgba(20, 20, 20, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(20, 20, 20, 0.85); /* Darker solid background instead of blur */
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--border-radius-md);
   padding: 10px 14px;
@@ -289,7 +287,7 @@ model-viewer.in-ar .hotspot {
   flex-direction: column;
   gap: 4px;
   min-width: 120px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Lighter shadow */
   position: relative;
   transform: translate(-50%, -100%);
   margin-top: -30px; /* Offset to float above the point */
