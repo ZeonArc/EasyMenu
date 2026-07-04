@@ -267,6 +267,14 @@ model-viewer {
   border-radius: var(--border-radius-md);
   padding: 0;
   cursor: pointer;
+  display: none; /* Hidden by default in site preview */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+model-viewer.in-ar .hotspot {
+  display: block;
+  opacity: 1;
 }
 
 .hotspot-content {
