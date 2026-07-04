@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>The Golden Oak - Menu</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <!-- Model Viewer for standard WebXR -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="app-header">
+        <button class="icon-button back-btn" aria-label="Go back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <h1 class="brand-name">THE GOLDEN OAK</h1>
+        <button class="icon-button cart-btn" aria-label="Cart">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </button>
+      </header>
+
+      <main class="product-container">
+        <div class="image-container">
+          <model-viewer
+            id="dish-model"
+            src="/dish.glb"
+            camera-controls
+            auto-rotate
+            ar
+            ar-modes="webxr scene-viewer quick-look"
+            shadow-intensity="1.5"
+            exposure="1.0"
+            environment-image="neutral"
+            alt="A 3D model of a dish"
+            class="dish-image">
+            
+            <!-- Hotspots for Annotations -->
+            <button class="hotspot" slot="hotspot-chicken" data-position="0 0.1 0" data-normal="0 1 0">
+              <div class="hotspot-content">
+                <span class="hotspot-title"><span class="icon">🍗</span> Chicken</span>
+                <span class="hotspot-desc">✓ High Protein</span>
+              </div>
+            </button>
+            <button class="hotspot" slot="hotspot-onion" data-position="-0.08 0.05 0.05" data-normal="0 1 0">
+              <div class="hotspot-content">
+                <span class="hotspot-title"><span class="icon">🧅</span> Onion</span>
+                <span class="hotspot-desc">✓ Vitamins</span>
+              </div>
+            </button>
+            <button class="hotspot" slot="hotspot-cucumber" data-position="0.08 0.05 -0.05" data-normal="0 1 0">
+              <div class="hotspot-content">
+                <span class="hotspot-title"><span class="icon">🥒</span> Cucumber</span>
+                <span class="hotspot-desc">✓ Low Calories</span>
+              </div>
+            </button>
+
+            <!-- Custom AR Button (hides the default one and maps our design to the slot) -->
+            <button slot="ar-button" class="btn-secondary" id="ar-button">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              VIEW ON YOUR TABLE
+            </button>
+          </model-viewer>
+        </div>
+
+        <div class="product-details">
+          <div class="carousel-indicators">
+            <span class="indicator active"></span>
+            <span class="indicator"></span>
+            <span class="indicator"></span>
+          </div>
+
+          <h2 class="product-title">Grilled Chicken Salad 🌶️</h2>
+          
+          <div class="product-meta">
+            <span class="price">$25.00</span>
+            <span class="calories">380 Calories</span>
+          </div>
+
+          <div class="tags-container">
+            <span class="tag">CHICKEN</span>
+            <span class="tag">LETTUCE</span>
+            <span class="tag">TOMATO</span>
+            <span class="tag">CUCUMBER</span>
+            <span class="tag">DRESSING</span>
+          </div>
+
+          <div class="actions-container">
+            <button class="btn-primary">ADD TO ORDER</button>
+            <!-- The AR button is inside the model-viewer slot now! -->
+            <p class="review-prompt">TAP TO REVIEW</p>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

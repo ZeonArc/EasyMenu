@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>The Golden Oak - AR View</title>
+
+    <!-- Google Fonts for the UI Overlays -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/src/style.css" />
+
+    <!-- 8th Wall A-Frame scripts -->
+    <script src="//cdn.8thwall.com/web/aframe/8frame-1.4.1.min.js"></script>
+    <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
+    
+    <!-- Custom Components for this experience -->
+    <script type="module" src="/src/ar-components.js"></script>
+
+    <!-- 8th Wall App Key -->
+    <script async src="//apps.8thwall.com/xrweb?appKey=YOUR_8THWALL_APP_KEY"></script>
+  </head>
+
+  <body>
+    <!-- 2D UI Overlay Layer -->
+    <div id="ui-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;">
+      
+      <!-- Back Button to return to Menu -->
+      <button id="close-ar-btn" class="icon-button back-btn" style="position: absolute; top: 20px; left: 20px; pointer-events: auto;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+
+      <!-- Floating Annotations (Hidden initially, will track 3D positions) -->
+      <div id="annotation-chicken" class="ar-annotation hidden">
+        <div class="hotspot-content">
+          <span class="hotspot-title"><span class="icon">🍗</span> Chicken</span>
+          <span class="hotspot-desc">✓ High Protein</span>
+        </div>
+      </div>
+      
+      <div id="annotation-onion" class="ar-annotation hidden">
+        <div class="hotspot-content">
+          <span class="hotspot-title"><span class="icon">🧅</span> Onion</span>
+          <span class="hotspot-desc">✓ Vitamins</span>
+        </div>
+      </div>
+      
+      <div id="annotation-cucumber" class="ar-annotation hidden">
+        <div class="hotspot-content">
+          <span class="hotspot-title"><span class="icon">🥒</span> Cucumber</span>
+          <span class="hotspot-desc">✓ Low Calories</span>
+        </div>
+      </div>
+    </div>
+
+    <a-scene
+      xrextras-gesture-detector
+      xrextras-almost-there
+      xrextras-loading
+      xrextras-runtime-error
+      renderer="colorManagement: true"
+      xrweb="disableWorldTracking: false"
+      ui-manager>
+
+      <a-assets>
+        <!-- Reusing the placeholder avocado model -->
+        <a-asset-item id="dish-model" src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb"></a-asset-item>
+      </a-assets>
+
+      <a-camera
+        id="camera"
+        position="0 4 4"
+        raycaster="objects: .cantap"
+        cursor="fuse: false; rayOrigin: mouse;">
+      </a-camera>
+
+      <a-entity
+        light="type: directional; intensity: 0.8; castShadow: true; shadowMapHeight:2048; shadowMapWidth:2048; shadowCameraTop: 10; shadowCameraBottom: -10; shadowCameraRight: 10; shadowCameraLeft: -10; target: #dish-group"
+        xrextras-attach="target: dish-group; offset: 1 15 3"
+        position="1 4.3 2.5"
+        shadow>
+      </a-entity>
+
+      <a-light type="ambient" intensity="0.5"></a-light>
+
+      <!-- The dish group that will be placed on the table -->
+      <a-entity id="dish-group" tap-to-place>
+        <a-entity
+          id="food-model"
+          gltf-model="#dish-model"
+          scale="5 5 5"
+          position="0 0 0"
+          shadow="receive: false; cast: true">
+          
+          <!-- Invisible target entities to attach annotations to -->
+          <!-- We scale the offsets because the parent model is scaled 5x. 
+               Avocado model is very small, so we use relatively small offsets. -->
+          <a-entity id="target-chicken" position="0.01 0.05 0.0" ui-tracker="elementId: annotation-chicken"></a-entity>
+          <a-entity id="target-onion" position="-0.02 0.03 0.02" ui-tracker="elementId: annotation-onion"></a-entity>
+          <a-entity id="target-cucumber" position="0.02 0.02 -0.02" ui-tracker="elementId: annotation-cucumber"></a-entity>
+        </a-entity>
+      </a-entity>
+
+      <!-- Ground plane for shadows -->
+      <a-plane
+        id="ground"
+        position="0 0 0"
+        rotation="-90 0 0"
+        width="1000"
+        height="1000"
+        material="shader: shadow; opacity: 0.5"
+        shadow="receive: true"
+        class="cantap">
+      </a-plane>
+
+    </a-scene>
+  </body>
+</html>
