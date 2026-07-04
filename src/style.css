@@ -354,9 +354,30 @@ model-viewer.in-ar .hotspot-content {
 .capsicum .hotspot-content { animation-delay: 0.6s; }
 .cucumber .hotspot-content { animation-delay: 0.7s; }
 
+/* Styles for labels below the dish (Tomato, Cucumber) */
+.label-bottom .hotspot-content {
+  bottom: auto;
+  top: 25px; /* Box is below the anchor point */
+}
+
+.label-bottom .hotspot-content::after {
+  bottom: auto;
+  top: -25px; /* Line goes UP to the anchor point */
+}
+
+/* Animations */
 @keyframes popIn {
   0% { opacity: 0; transform: translateX(-50%) translateY(15px) scale(0.9); }
   100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes popInBottom {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-15px) scale(0.9); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+model-viewer.in-ar .label-bottom .hotspot-content {
+  animation: popInBottom 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 /* Hide default AR button since we use a slot */
