@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (viewer) {
     viewer.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'session-started') {
-        // Do nothing here, let the model-viewer and Blender animation handle visibility
+        // Hide the poster instantly when AR starts
+        viewer.classList.add('in-ar-session');
       } else if (event.detail.status === 'object-placed') {
         // Trigger animations once the user places the pizza on the floor
         viewer.classList.add('in-ar');
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       } else if (event.detail.status === 'not-presenting') {
         viewer.classList.remove('in-ar');
+        viewer.classList.remove('in-ar-session');
         // Reset animation and scale
         viewer.pause();
         viewer.currentTime = 0;

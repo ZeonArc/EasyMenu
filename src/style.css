@@ -295,6 +295,12 @@ model-viewer {
   width: 100%;
   height: 100%;
   --poster-color: transparent;
+  outline: none;
+}
+
+/* Fix: Completely hide the 2D poster image when in AR mode so it doesn't cover the screen */
+model-viewer.in-ar-session::part(default-poster) {
+  display: none !important;
 }
 
 /* ── Hotspot anchor dot ── */
