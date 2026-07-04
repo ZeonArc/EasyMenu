@@ -361,34 +361,34 @@ model-viewer.in-ar .hotspot {
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(30, 30, 30, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
-  padding: 6px 10px;
+  background: rgba(20, 20, 20, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 8px 12px;
   color: white;
   display: flex;
   flex-direction: column;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   opacity: 0;
 }
 
 /* Entrance animation in AR */
 model-viewer.in-ar .hotspot-content {
-  animation: popIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* Thin connecting line from card down to the dot */
-.hotspot-content::after {
+/* ── Connecting line from dot to card ── */
+.hotspot-content::before {
   content: '';
   position: absolute;
   bottom: -16px;
   left: 50%;
   width: 1px;
   height: 16px;
-  background: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
   transform: translateX(-50%);
 }
 
@@ -398,34 +398,84 @@ model-viewer.in-ar .hotspot-content {
   top: 16px;
 }
 
-.label-bottom .hotspot-content::after {
+.label-bottom .hotspot-content::before {
   bottom: auto;
   top: -16px;
+  background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
 }
 
 /* ── Typography ── */
 .hotspot-header {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-bottom: 2px;
-  letter-spacing: 0.3px;
+  gap: 6px;
+  margin-bottom: 3px;
+  letter-spacing: 0.5px;
 }
 
 .hotspot-header .icon {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .hotspot-desc {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.75);
   line-height: 1.4;
   font-weight: 400;
 }
 
-/* ── Staggered pop-in delays (faster for immediate appearance) ── */
+/* ── AR UI Overlay (Visible only in AR) ── */
+.ar-ui-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: var(--spacing-lg) var(--spacing-md);
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  z-index: 1000;
+}
+
+model-viewer.in-ar .ar-ui-overlay {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.ar-ui-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.ar-ui-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.ar-ui-price {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+}
+
+.ar-order-btn {
+  padding: 16px;
+  font-size: 1rem;
+}
+
+/* ── Staggered pop-in delays ── */
 .nduja .hotspot-content       { animation-delay: 0s; }
 .mozzarella .hotspot-content  { animation-delay: 0.1s; }
 .jalapeno .hotspot-content    { animation-delay: 0.2s; }
@@ -434,25 +484,12 @@ model-viewer.in-ar .hotspot-content {
 .basil .hotspot-content       { animation-delay: 0.5s; }
 .crust .hotspot-content       { animation-delay: 0.6s; }
 
-/* Also stagger the anchor dot appearance */
-.nduja::before, .nduja::after       { animation-delay: 0s; }
-.mozzarella::before, .mozzarella::after { animation-delay: 0.1s; }
-.jalapeno::before, .jalapeno::after { animation-delay: 0.2s; }
-.peppers::before, .peppers::after   { animation-delay: 0.3s; }
-.sauce::before, .sauce::after       { animation-delay: 0.4s; }
-.basil::before, .basil::after       { animation-delay: 0.5s; }
-.crust::before, .crust::after       { animation-delay: 0.6s; }
-
 /* ── Keyframes ── */
-/* Labels above the dish: spin in from left + blur + scale */
 @keyframes popIn {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(20px) scale(0.6) rotateY(-60deg);
-    filter: blur(6px);
-  }
-  70% {
-    filter: blur(0);
+    transform: translateX(-50%) translateY(20px) scale(0.6) rotateY(-30deg);
+    filter: blur(4px);
   }
   100% {
     opacity: 1;
@@ -461,15 +498,11 @@ model-viewer.in-ar .hotspot-content {
   }
 }
 
-/* Labels below the dish: spin in from right + blur + scale */
 @keyframes popInBottom {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px) scale(0.6) rotateY(60deg);
-    filter: blur(6px);
-  }
-  70% {
-    filter: blur(0);
+    transform: translateX(-50%) translateY(-20px) scale(0.6) rotateY(30deg);
+    filter: blur(4px);
   }
   100% {
     opacity: 1;
@@ -479,12 +512,7 @@ model-viewer.in-ar .hotspot-content {
 }
 
 model-viewer.in-ar .label-bottom .hotspot-content {
-  animation: popInBottom 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* Override the default animation duration for the dramatic entrance */
-model-viewer.in-ar .hotspot-content {
-  animation: popIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: popInBottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Anchor dot fade-in */
