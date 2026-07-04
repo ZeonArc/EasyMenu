@@ -38,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Trigger animations once the user places the pizza on the floor
         viewer.classList.add('in-ar');
 
-        // Play the native Blender animation when placed!
-        viewer.play();
+        // Play the native Blender animation exactly once!
+        viewer.play({ repetitions: 1 });
 
       } else if (event.detail.status === 'not-presenting') {
         viewer.classList.remove('in-ar');

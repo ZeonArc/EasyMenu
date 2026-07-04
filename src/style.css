@@ -419,23 +419,23 @@ model-viewer.in-ar .hotspot-content {
   font-weight: 400;
 }
 
-/* ── Staggered pop-in delays (wider gaps for drama) ── */
-.nduja .hotspot-content       { animation-delay: 0.3s; }
-.mozzarella .hotspot-content  { animation-delay: 0.5s; }
-.jalapeno .hotspot-content    { animation-delay: 0.7s; }
-.peppers .hotspot-content     { animation-delay: 0.9s; }
-.sauce .hotspot-content       { animation-delay: 1.1s; }
-.basil .hotspot-content       { animation-delay: 1.3s; }
-.crust .hotspot-content       { animation-delay: 1.5s; }
+/* ── Staggered pop-in delays (faster for immediate appearance) ── */
+.nduja .hotspot-content       { animation-delay: 0s; }
+.mozzarella .hotspot-content  { animation-delay: 0.1s; }
+.jalapeno .hotspot-content    { animation-delay: 0.2s; }
+.peppers .hotspot-content     { animation-delay: 0.3s; }
+.sauce .hotspot-content       { animation-delay: 0.4s; }
+.basil .hotspot-content       { animation-delay: 0.5s; }
+.crust .hotspot-content       { animation-delay: 0.6s; }
 
 /* Also stagger the anchor dot appearance */
-.nduja::before, .nduja::after       { animation-delay: 0.2s; }
-.mozzarella::before, .mozzarella::after { animation-delay: 0.4s; }
-.jalapeno::before, .jalapeno::after { animation-delay: 0.6s; }
-.peppers::before, .peppers::after   { animation-delay: 0.8s; }
-.sauce::before, .sauce::after       { animation-delay: 1.0s; }
-.basil::before, .basil::after       { animation-delay: 1.2s; }
-.crust::before, .crust::after       { animation-delay: 1.4s; }
+.nduja::before, .nduja::after       { animation-delay: 0s; }
+.mozzarella::before, .mozzarella::after { animation-delay: 0.1s; }
+.jalapeno::before, .jalapeno::after { animation-delay: 0.2s; }
+.peppers::before, .peppers::after   { animation-delay: 0.3s; }
+.sauce::before, .sauce::after       { animation-delay: 0.4s; }
+.basil::before, .basil::after       { animation-delay: 0.5s; }
+.crust::before, .crust::after       { animation-delay: 0.6s; }
 
 /* ── Keyframes ── */
 /* Labels above the dish: spin in from left + blur + scale */
