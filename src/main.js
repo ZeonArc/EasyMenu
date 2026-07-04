@@ -27,16 +27,4 @@ document.addEventListener('DOMContentLoaded', () => {
       indicator.classList.add('active');
     });
   });
-  
-  // Handle model-viewer AR status to show hotspots only in AR
-  const viewer = document.getElementById('dish-model');
-  if (viewer) {
-    viewer.addEventListener('ar-status', (event) => {
-      if (event.detail.status === 'session-started') {
-        viewer.classList.add('in-ar');
-      } else if (event.detail.status === 'not-presenting') {
-        viewer.classList.remove('in-ar');
-      }
-    });
-  }
 });
