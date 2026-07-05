@@ -185,9 +185,9 @@
     </div>
 
     <!-- Zappar A-Frame Scene -->
-    <a-scene loading-screen="backgroundColor: #050505" renderer="colorManagement: true, antialias: true" light="defaultLightsEnabled: false">
+    <a-scene gltf-model="dracoDecoderPath: https://www.gstatic.com/draco/v1/decoders/;" loading-screen="backgroundColor: #050505" renderer="colorManagement: true, antialias: true" light="defaultLightsEnabled: false">
       <a-assets>
-        <a-asset-item id="dish-model" src="dish.glb"></a-asset-item>
+        <a-asset-item id="dish-model" src="/dish.glb"></a-asset-item>
       </a-assets>
 
       <!-- Zappar Camera -->
@@ -239,44 +239,41 @@
         document.querySelectorAll('.aframe-hotspot').forEach(el => el.classList.add('visible'));
       });
 
-      // 3D to 2D Hotspot Projection Logic
-      const scene = document.querySelector('a-scene');
-      
-      const hotspots = [
-        { ref: document.getElementById('ref-nduja'), ui: document.getElementById('hs-nduja') },
-        { ref: document.getElementById('ref-mozzarella'), ui: document.getElementById('hs-mozzarella') },
-        { ref: document.getElementById('ref-jalapeno'), ui: document.getElementById('hs-jalapeno') },
-        { ref: document.getElementById('ref-peppers'), ui: document.getElementById('hs-peppers') },
-        { ref: document.getElementById('ref-sauce'), ui: document.getElementById('hs-sauce') },
-        { ref: document.getElementById('ref-basil'), ui: document.getElementById('hs-basil') },
-        { ref: document.getElementById('ref-crust'), ui: document.getElementById('hs-crust') }
-      ];
-
-      // Hook into A-Frame render loop
-      scene.addEventListener('render-target-loaded', () => {
-        const camera = scene.camera;
-        scene.renderer.setAnimationLoop(() => {
-          scene.renderer.render(scene.object3D, camera);
-          
+      // Register custom component for hotspot projection
+      AFRAME.registerComponent('hotspot-manager', {
+        init: function () {
+          this.hotspots = [
+            { ref: document.getElementById('ref-nduja'), ui: document.getElementById('hs-nduja') },
+            { ref: document.getElementById('ref-mozzarella'), ui: document.getElementById('hs-mozzarella') },
+            { ref: document.getElementById('ref-jalapeno'), ui: document.getElementById('hs-jalapeno') },
+            { ref: document.getElementById('ref-peppers'), ui: document.getElementById('hs-peppers') },
+            { ref: document.getElementById('ref-sauce'), ui: document.getElementById('hs-sauce') },
+            { ref: document.getElementById('ref-basil'), ui: document.getElementById('hs-basil') },
+            { ref: document.getElementById('ref-crust'), ui: document.getElementById('hs-crust') }
+          ];
+          this.vector = new THREE.Vector3();
+        },
+        tick: function () {
           if (!isPlaced) return;
+          
+          const camera = this.el.sceneEl.camera;
+          if (!camera) return;
 
-          // Update 2D UI positions based on 3D references
-          hotspots.forEach(hs => {
+          this.hotspots.forEach(hs => {
             if (!hs.ref || !hs.ui) return;
             
-            // Get world position of the reference entity
-            const worldPos = new THREE.Vector3();
-            hs.ref.object3D.getWorldPosition(worldPos);
+            // Get world position
+            hs.ref.object3D.getWorldPosition(this.vector);
             
-            // Project to 2D screen space
-            worldPos.project(camera);
+            // Project to 2D
+            this.vector.project(camera);
             
             // Convert to CSS coordinates
-            const x = Math.round((0.5 + worldPos.x / 2) * window.innerWidth);
-            const y = Math.round((0.5 - worldPos.y / 2) * window.innerHeight);
+            const x = Math.round((0.5 + this.vector.x / 2) * window.innerWidth);
+            const y = Math.round((0.5 - this.vector.y / 2) * window.innerHeight);
             
             // Only show if in front of camera
-            if (worldPos.z < 1) {
+            if (this.vector.z < 1) {
               hs.ui.style.left = `${x}px`;
               hs.ui.style.top = `${y}px`;
               hs.ui.style.display = 'block';
@@ -284,8 +281,11 @@
               hs.ui.style.display = 'none';
             }
           });
-        });
+        }
       });
+      
+      // Attach the manager to the scene
+      document.querySelector('a-scene').setAttribute('hotspot-manager', '');
     </script>
   </body>
 </html>
