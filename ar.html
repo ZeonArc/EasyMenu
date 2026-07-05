@@ -2,116 +2,290 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>The Golden Oak - AR View</title>
-
-    <!-- Google Fonts for the UI Overlays -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Easy Menu - Zappar AR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="/src/style.css" />
 
-    <!-- 8th Wall A-Frame scripts -->
-    <script src="//cdn.8thwall.com/web/aframe/8frame-1.4.1.min.js"></script>
-    <script src="//cdn.8thwall.com/web/xrextras/xrextras.js"></script>
-    
-    <!-- Custom Components for this experience -->
-    <script type="module" src="/src/ar-components.js"></script>
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <!-- Zappar A-Frame -->
+    <script src="https://libs.zappar.com/zappar-aframe/2.0.0/zappar-aframe.js"></script>
 
-    <!-- 8th Wall App Key -->
-    <script async src="//apps.8thwall.com/xrweb?appKey=YOUR_8THWALL_APP_KEY"></script>
+    <style>
+      body { margin: 0; padding: 0; overflow: hidden; background: #000; }
+      
+      #zappar-ui {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .top-nav {
+        padding: 20px;
+        pointer-events: auto;
+      }
+
+      .back-btn {
+        background: rgba(20, 20, 20, 0.65);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .ar-instruction {
+        text-align: center;
+        color: white;
+        background: rgba(0,0,0,0.6);
+        padding: 12px 24px;
+        border-radius: 20px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        margin: auto;
+        margin-top: 20px;
+        font-weight: 600;
+        font-family: var(--font-sans);
+        transition: opacity 0.3s;
+      }
+
+      .ar-ui-overlay {
+        position: relative;
+        transform: none;
+        opacity: 0;
+        transition: opacity 0.5s;
+        pointer-events: none;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+        padding: var(--spacing-lg) var(--spacing-md);
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+      .ar-ui-overlay.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #place-btn {
+        margin: auto;
+        margin-bottom: 40px;
+        background: white;
+        color: black;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-family: var(--font-sans);
+        font-size: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      /* 2D Hotspot Overlays */
+      .aframe-hotspot {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+        opacity: 0;
+        transition: opacity 0.3s;
+        /* Default dot */
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+      }
+      .aframe-hotspot.visible { opacity: 1; }
+      
+      /* Make sure hotspot content inside aframe shows properly */
+      .aframe-hotspot .hotspot-content {
+        opacity: 1;
+        animation: none;
+      }
+    </style>
   </head>
-
   <body>
-    <!-- 2D UI Overlay Layer -->
-    <div id="ui-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;">
+    <div id="zappar-ui">
+      <div class="top-nav">
+        <button class="icon-button back-btn" onclick="window.location.href='/'" aria-label="Go back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+      </div>
       
-      <!-- Back Button to return to Menu -->
-      <button id="close-ar-btn" class="icon-button back-btn" style="position: absolute; top: 20px; left: 20px; pointer-events: auto;">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+      <div id="instruction" class="ar-instruction">Point at a flat surface and tap Place</div>
+      <button id="place-btn">Place Pizza</button>
 
-      <!-- Floating Annotations (Hidden initially, will track 3D positions) -->
-      <div id="annotation-chicken" class="ar-annotation hidden">
-        <div class="hotspot-content">
-          <span class="hotspot-title"><span class="icon">🍗</span> Chicken</span>
-          <span class="hotspot-desc">✓ High Protein</span>
+      <div id="order-panel" class="ar-ui-overlay">
+        <div class="ar-ui-details">
+          <h3 class="ar-ui-title">Piccante Pizza</h3>
+          <span class="ar-ui-price">$22.00</span>
         </div>
+        <button class="btn-primary ar-order-btn" onclick="alert('Order placed!')">ADD TO ORDER</button>
       </div>
       
-      <div id="annotation-onion" class="ar-annotation hidden">
-        <div class="hotspot-content">
-          <span class="hotspot-title"><span class="icon">🧅</span> Onion</span>
-          <span class="hotspot-desc">✓ Vitamins</span>
+      <!-- 2D Hotspots projected from 3D -->
+      <div id="hotspots-container">
+        <!-- Nduja -->
+        <div id="hs-nduja" class="aframe-hotspot">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🌶️</span> Nduja</div>
+            <div class="hotspot-desc">▪ Spicy Spread<br>▪ Rich Flavor</div>
+          </div>
         </div>
-      </div>
-      
-      <div id="annotation-cucumber" class="ar-annotation hidden">
-        <div class="hotspot-content">
-          <span class="hotspot-title"><span class="icon">🥒</span> Cucumber</span>
-          <span class="hotspot-desc">✓ Low Calories</span>
+        <!-- Mozzarella -->
+        <div id="hs-mozzarella" class="aframe-hotspot">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🧀</span> Mozzarella</div>
+            <div class="hotspot-desc">▪ High Calcium<br>▪ Fresh & Creamy</div>
+          </div>
+        </div>
+        <!-- Jalapeno -->
+        <div id="hs-jalapeno" class="aframe-hotspot">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🫑</span> Jalapeño</div>
+            <div class="hotspot-desc">▪ Capsaicin Boost<br>▪ Metabolism+</div>
+          </div>
+        </div>
+        <!-- Peppers -->
+        <div id="hs-peppers" class="aframe-hotspot">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🫑</span> Peppers</div>
+            <div class="hotspot-desc">▪ Vitamin C<br>▪ Smoky & Sweet</div>
+          </div>
+        </div>
+        <!-- Sauce -->
+        <div id="hs-sauce" class="aframe-hotspot">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🍅</span> Tomato Sauce</div>
+            <div class="hotspot-desc">▪ San Marzano<br>▪ Antioxidants</div>
+          </div>
+        </div>
+        <!-- Basil -->
+        <div id="hs-basil" class="aframe-hotspot label-bottom">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🌿</span> Basil</div>
+            <div class="hotspot-desc">▪ Fresh Herb<br>▪ Anti-Inflammatory</div>
+          </div>
+        </div>
+        <!-- Crust -->
+        <div id="hs-crust" class="aframe-hotspot label-bottom">
+          <div class="hotspot-content">
+            <div class="hotspot-header"><span class="icon">🍕</span> Crust</div>
+            <div class="hotspot-desc">▪ Wood-Fired<br>▪ Neapolitan Style</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <a-scene
-      xrextras-gesture-detector
-      xrextras-almost-there
-      xrextras-loading
-      xrextras-runtime-error
-      renderer="colorManagement: true"
-      xrweb="disableWorldTracking: false"
-      ui-manager>
-
+    <!-- Zappar A-Frame Scene -->
+    <a-scene loading-screen="backgroundColor: #050505" renderer="colorManagement: true, antialias: true" light="defaultLightsEnabled: false">
       <a-assets>
-        <!-- Reusing the placeholder avocado model -->
-        <a-asset-item id="dish-model" src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb"></a-asset-item>
+        <a-asset-item id="dish-model" src="dish.glb"></a-asset-item>
       </a-assets>
 
-      <a-camera
-        id="camera"
-        position="0 4 4"
-        raycaster="objects: .cantap"
-        cursor="fuse: false; rayOrigin: mouse;">
-      </a-camera>
+      <!-- Zappar Camera -->
+      <a-camera zappar-camera></a-camera>
 
-      <a-entity
-        light="type: directional; intensity: 0.8; castShadow: true; shadowMapHeight:2048; shadowMapWidth:2048; shadowCameraTop: 10; shadowCameraBottom: -10; shadowCameraRight: 10; shadowCameraLeft: -10; target: #dish-group"
-        xrextras-attach="target: dish-group; offset: 1 15 3"
-        position="1 4.3 2.5"
-        shadow>
-      </a-entity>
-
-      <a-light type="ambient" intensity="0.5"></a-light>
-
-      <!-- The dish group that will be placed on the table -->
-      <a-entity id="dish-group" tap-to-place>
-        <a-entity
-          id="food-model"
-          gltf-model="#dish-model"
-          scale="5 5 5"
-          position="0 0 0"
-          shadow="receive: false; cast: true">
+      <!-- Zappar Instant Tracker -->
+      <a-entity zappar-instant="placement-mode: true" id="tracker">
+        
+        <!-- The Pizza Model -->
+        <a-entity id="pizza" gltf-model="#dish-model" scale="1 1 1" visible="false">
+          <!-- Lighting for the pizza -->
+          <a-entity light="type: ambient; intensity: 0.8;"></a-entity>
+          <a-entity light="type: directional; intensity: 1.5; castShadow: true;" position="1 2 1"></a-entity>
           
-          <!-- Invisible target entities to attach annotations to -->
-          <!-- We scale the offsets because the parent model is scaled 5x. 
-               Avocado model is very small, so we use relatively small offsets. -->
-          <a-entity id="target-chicken" position="0.01 0.05 0.0" ui-tracker="elementId: annotation-chicken"></a-entity>
-          <a-entity id="target-onion" position="-0.02 0.03 0.02" ui-tracker="elementId: annotation-onion"></a-entity>
-          <a-entity id="target-cucumber" position="0.02 0.02 -0.02" ui-tracker="elementId: annotation-cucumber"></a-entity>
+          <!-- Invisible 3D reference points for hotspots -->
+          <!-- Coordinates matched from the previous model-viewer data-position -->
+          <a-entity id="ref-nduja" position="-0.18 0.05 -0.04"></a-entity>
+          <a-entity id="ref-mozzarella" position="-0.12 0.05 -0.16"></a-entity>
+          <a-entity id="ref-jalapeno" position="0.12 0.05 -0.16"></a-entity>
+          <a-entity id="ref-peppers" position="0.18 0.05 -0.04"></a-entity>
+          <a-entity id="ref-sauce" position="0 0.07 0"></a-entity>
+          <a-entity id="ref-basil" position="-0.12 0.05 0.12"></a-entity>
+          <a-entity id="ref-crust" position="0.12 0.05 0.12"></a-entity>
         </a-entity>
       </a-entity>
-
-      <!-- Ground plane for shadows -->
-      <a-plane
-        id="ground"
-        position="0 0 0"
-        rotation="-90 0 0"
-        width="1000"
-        height="1000"
-        material="shader: shadow; opacity: 0.5"
-        shadow="receive: true"
-        class="cantap">
-      </a-plane>
-
     </a-scene>
+
+    <script>
+      const tracker = document.getElementById('tracker');
+      const placeBtn = document.getElementById('place-btn');
+      const instruction = document.getElementById('instruction');
+      const orderPanel = document.getElementById('order-panel');
+      const pizza = document.getElementById('pizza');
+      let isPlaced = false;
+
+      // When place button is tapped
+      placeBtn.addEventListener('click', () => {
+        isPlaced = true;
+        // Lock the tracker to the current position
+        tracker.setAttribute('zappar-instant', 'placement-mode: false');
+        pizza.setAttribute('visible', 'true');
+        
+        // Update UI
+        placeBtn.style.display = 'none';
+        instruction.style.display = 'none';
+        orderPanel.classList.add('visible');
+        
+        // Show hotspots
+        document.querySelectorAll('.aframe-hotspot').forEach(el => el.classList.add('visible'));
+      });
+
+      // 3D to 2D Hotspot Projection Logic
+      const scene = document.querySelector('a-scene');
+      
+      const hotspots = [
+        { ref: document.getElementById('ref-nduja'), ui: document.getElementById('hs-nduja') },
+        { ref: document.getElementById('ref-mozzarella'), ui: document.getElementById('hs-mozzarella') },
+        { ref: document.getElementById('ref-jalapeno'), ui: document.getElementById('hs-jalapeno') },
+        { ref: document.getElementById('ref-peppers'), ui: document.getElementById('hs-peppers') },
+        { ref: document.getElementById('ref-sauce'), ui: document.getElementById('hs-sauce') },
+        { ref: document.getElementById('ref-basil'), ui: document.getElementById('hs-basil') },
+        { ref: document.getElementById('ref-crust'), ui: document.getElementById('hs-crust') }
+      ];
+
+      // Hook into A-Frame render loop
+      scene.addEventListener('render-target-loaded', () => {
+        const camera = scene.camera;
+        scene.renderer.setAnimationLoop(() => {
+          scene.renderer.render(scene.object3D, camera);
+          
+          if (!isPlaced) return;
+
+          // Update 2D UI positions based on 3D references
+          hotspots.forEach(hs => {
+            if (!hs.ref || !hs.ui) return;
+            
+            // Get world position of the reference entity
+            const worldPos = new THREE.Vector3();
+            hs.ref.object3D.getWorldPosition(worldPos);
+            
+            // Project to 2D screen space
+            worldPos.project(camera);
+            
+            // Convert to CSS coordinates
+            const x = Math.round((0.5 + worldPos.x / 2) * window.innerWidth);
+            const y = Math.round((0.5 - worldPos.y / 2) * window.innerHeight);
+            
+            // Only show if in front of camera
+            if (worldPos.z < 1) {
+              hs.ui.style.left = `${x}px`;
+              hs.ui.style.top = `${y}px`;
+              hs.ui.style.display = 'block';
+            } else {
+              hs.ui.style.display = 'none';
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>
