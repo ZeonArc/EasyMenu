@@ -28,9 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Handle model-viewer AR status
+  // Handle model-viewer AR status and animations
   const viewer = document.getElementById('dish-model');
   if (viewer) {
+    // Play the built-in animation exactly once when the 3D model finishes loading on the web page
+    viewer.addEventListener('load', () => {
+      viewer.play({ repetitions: 1 });
+    });
+
     viewer.addEventListener('ar-status', (event) => {
       if (event.detail.status === 'session-started') {
         // Hide the poster instantly when AR starts
